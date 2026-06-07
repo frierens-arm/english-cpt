@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zero Day - ENL1W CPT</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── Catppuccin Frappe ── */
+  :root {
+    --rosewater: #f2d5cf;
+    --flamingo: #eebebe;
+    --pink: #f4b8e4;
+    --mauve: #ca9ee6;
+    --red: #e78284;
+    --maroon: #ea999c;
+    --peach: #ef9f76;
+    --yellow: #e5c890;
+    --green: #a6d189;
+    --teal: #81c8be;
+    --sky: #99d1db;
+    --sapphire: #85c1dc;
+    --blue: #8caaee;
+    --lavender: #babbf1;
+    --text: #c6d0f5;
+    --subtext1: #b5bfe2;
+    --subtext0: #a5adce;
+    --overlay2: #949cbb;
+    --overlay1: #838ba7;
+    --overlay0: #737994;
+    --surface2: #626880;
+    --surface1: #51576d;
+    --surface0: #414559;
+    --base: #303446;
+    --mantle: #292c3c;
+    --crust: #232634;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--crust);
+    color: var(--text);
+  }
+
+  /* ── Slide System ── */
+  .slide {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 6rem;
+    opacity: 0;
+    transform: translateX(80px) scale(0.97);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    overflow-y: auto;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    pointer-events: all;
+    z-index: 10;
+  }
+  .slide.exit-left {
+    opacity: 0;
+    transform: translateX(-60px) scale(0.97);
+  }
+
+  /* ── Typography ── */
+  .tagline {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--mauve);
+    margin-bottom: 1rem;
+  }
+  .mega-title {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+  .mega-title .accent { color: var(--mauve); }
+  .mega-title .accent-blue { color: var(--blue); }
+  .mega-title .accent-green { color: var(--green); }
+  .mega-title .accent-peach { color: var(--peach); }
+  .subtitle {
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    font-weight: 300;
+    color: var(--subtext0);
+    max-width: 700px;
+    line-height: 1.6;
+  }
+  .statement {
+    font-size: clamp(1.4rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.3;
+    max-width: 900px;
+    color: var(--text);
+  }
+
+  /* ── Navigation ── */
+  .nav {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    z-index: 100;
+    background: rgba(35, 38, 52, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 0.6rem 1.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--surface0);
+  }
+  .nav-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid var(--surface2);
+    background: var(--surface0);
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: var(--mauve); border-color: var(--mauve); color: var(--crust); }
+  .nav-btn:active { transform: scale(0.92); }
+  .nav-progress {
+    width: 200px; height: 3px;
+    background: var(--surface0);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .nav-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mauve), var(--blue));
+    border-radius: 999px;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--overlay1);
+    min-width: 45px;
+    text-align: right;
+  }
+
+  /* ── Counter ── */
+  .slide-counter {
+    position: fixed;
+    top: 2rem;
+    right: 6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--overlay0);
+    z-index: 100;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── Content Cards ── */
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 2.5rem;
+  }
+  .comp-card {
+    background: var(--base);
+    border: 1px solid var(--surface0);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    cursor: default;
+  }
+  .comp-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--mauve);
+    box-shadow: 0 20px 40px rgba(202, 158, 230, 0.12);
+  }
+  .comp-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .comp-title {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .comp-sub {
+    font-size: 0.85rem;
+    color: var(--overlay1);
+    line-height: 1.5;
+  }
+  .comp-temp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    background: linear-gradient(135deg, var(--mauve), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ── 2-Column Grid ── */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 900px;
+    margin-top: 2rem;
+  }
+
+  /* ── Flow Diagram ── */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .flow-step {
+    background: var(--surface0);
+    border: 1px solid var(--surface1);
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    text-align: center;
+    min-width: 140px;
+    transition: border-color 0.3s;
+  }
+  .flow-step:hover { border-color: var(--green); }
+  .flow-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .flow-label { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+  .flow-arrow {
+    font-size: 1.5rem;
+    color: var(--overlay1);
+  }
+
+  /* ── Quote Box ── */
+  .quote-box {
+    background: var(--base);
+    border-left: 4px solid var(--peach);
+    border-radius: 0 16px 16px 0;
+    padding: 1.5rem 2rem;
+    margin-top: 2rem;
+    max-width: 800px;
+    font-style: italic;
+    color: var(--subtext0);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .quote-box cite {
+    display: block;
+    margin-top: 0.8rem;
+    font-style: normal;
+    color: var(--overlay2);
+    font-size: 0.85rem;
+  }
+
+  /* ── Badge ── */
+  .badge {
+    display: inline-block;
+    padding: 0.2em 0.7em;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .badge-mauve { background: rgba(202,158,230,0.15); color: var(--mauve); }
+  .badge-blue { background: rgba(140,170,238,0.15); color: var(--blue); }
+  .badge-green { background: rgba(166,209,137,0.15); color: var(--green); }
+  .badge-peach { background: rgba(239,159,118,0.15); color: var(--peach); }
+  .badge-pink { background: rgba(244,184,228,0.15); color: var(--pink); }
+  .badge-yellow { background: rgba(229,200,144,0.15); color: var(--yellow); }
+
+  /* ── Big Number Reveal ── */
+  .big-num-section { display: flex; gap: 3rem; margin-top: 2rem; align-items: center; }
+  .big-num { text-align: center; }
+  .big-num-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(3rem, 7vw, 5rem);
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--mauve), var(--blue), var(--teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: transform 0.3s;
+  }
+  .big-num-val:hover { transform: scale(1.05); }
+  .big-num-label { font-size: 0.85rem; color: var(--overlay1); margin-top: 0.5rem; }
+
+  /* ── Scrollbar ── */
+  .slide::-webkit-scrollbar { width: 4px; }
+  .slide::-webkit-scrollbar-track { background: transparent; }
+  .slide::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 999px; }
+
+  /* ── Reveal Animation ── */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-d1 { transition-delay: 0.1s; }
+  .reveal-d2 { transition-delay: 0.25s; }
+  .reveal-d3 { transition-delay: 0.4s; }
+  .reveal-d4 { transition-delay: 0.55s; }
+  .reveal-d5 { transition-delay: 0.7s; }
+  .reveal-d6 { transition-delay: 0.85s; }
+
+  /* ── Q Slide ── */
+  .qa-box {
+    margin-top: 3rem;
+    max-width: 700px;
+    background: var(--surface0);
+    border: 1px solid var(--surface1);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+  }
+  .qa-text { font-size: 1.1rem; color: var(--subtext0); }
+
+  /* ── Body text for long-form slides ── */
+  .body-text {
+    font-size: 1.05rem;
+    color: var(--subtext1);
+    max-width: 750px;
+    line-height: 1.8;
+    text-align: left;
+  }
+  .body-text .accent { color: var(--peach); font-weight: 600; }
+  .body-text .accent-green { color: var(--green); font-weight: 600; }
+  .body-text .accent-blue { color: var(--blue); font-weight: 600; }
+
+  /* ── Character Card ── */
+  .char-card {
+    background: var(--base);
+    border: 1px solid var(--surface0);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+  .char-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--blue);
+    box-shadow: 0 20px 40px rgba(140, 170, 238, 0.12);
+  }
+  .char-name {
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--blue);
+    margin-bottom: 0.2rem;
+  }
+  .char-role {
+    font-size: 0.75rem;
+    color: var(--overlay2);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.8rem;
+  }
+  .char-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.8rem;
+  }
+  .char-desc {
+    font-size: 0.9rem;
+    color: var(--subtext0);
+    line-height: 1.6;
+  }
+
+  /* ── Moment Item ── */
+  .moment-item {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--surface0);
+  }
+  .moment-item:last-child { border-bottom: none; }
+  .moment-num {
+    background: var(--surface0);
+    color: var(--peach);
+    font-weight: 800;
+    font-size: 0.8rem;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .moment-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+  .moment-desc {
+    font-size: 0.85rem;
+    color: var(--subtext0);
+    line-height: 1.55;
+  }
+
+  /* ── Works Cited ── */
+  .works-cited {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--overlay2);
+    line-height: 1.7;
+    max-width: 600px;
+  }
+  .works-cited-full {
+    margin-top: 2rem;
+    text-align: left;
+    max-width: 700px;
+    width: 100%;
+  }
+  .mla-entry {
+    font-size: 1rem;
+    color: var(--subtext1);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    padding-left: 2.5rem;
+    text-indent: -2.5rem;
+  }
+  .mla-entry em {
+    font-style: italic;
+    color: var(--text);
+  }
+  .mla-entry a {
+    color: var(--blue);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(140, 170, 238, 0.3);
+    transition: border-color 0.2s;
+  }
+  .mla-entry a:hover {
+    border-color: var(--blue);
+  }
+</style>
+</head>
+<body>
+
+<!-- Slide Counter -->
+<div class="slide-counter" id="counter">01 / 15</div>
+
+<!-- Navigation -->
+<div class="nav">
+  <button class="nav-btn" onclick="prevSlide()">&#8592;</button>
+  <div class="nav-progress"><div class="nav-progress-bar" id="progress"></div></div>
+  <span class="nav-count" id="slideNum">1</span>
+  <button class="nav-btn" onclick="nextSlide()">&#8594;</button>
+</div>
+
+<!-- ========================================
+     SLIDE 01 - TITLE
+     ======================================== -->
+<div class="slide active" id="s1">
+  <div class="reveal reveal-d1">
+    <div class="tagline">ENL1W - Culminating Performance Task</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div style="font-size:0.85rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--sapphire); margin-bottom:0.5rem;">Book Presentation</div>
+  </div>
+  <div class="reveal reveal-d3">
+    <h1 class="mega-title">
+      Zero<br>
+      <span class="accent-peach">Day</span>
+    </h1>
+  </div>
+  <div class="reveal reveal-d4">
+    <p class="subtitle">
+      David Baldacci &middot; A John Puller Thriller
+    </p>
+  </div>
+  <div class="reveal reveal-d5" style="margin-top:1.5rem;">
+    <img src="images/zero_day_cover_2.jpg" alt="Zero Day book cover by David Baldacci" style="max-height:220px; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.4);">
+  </div>
+  <div class="reveal reveal-d6" style="margin-top:1.5rem;">
+    <span class="badge badge-mauve">Thriller</span>
+    <span class="badge badge-blue" style="margin-left:0.5rem;">Crime Fiction</span>
+    <span class="badge badge-peach" style="margin-left:0.5rem;">2011</span>
+  </div>
+</div>
+
+<!-- ========================================
+     SLIDE 02 - THE HOOK
+     ======================================== -->
+<div class="slide" id="s2">
+  <div class="reveal reveal-d1">
+    <div class="tagline">The Hook</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="statement">
+      What if your entire town was built on a lie?<br><br>
+      <span style="color:var(--peach);">What if the air you breathed was slowly killing you</span><br>
+      and nobody in power cared?
+    </div>
+  </div>
+  <div class="reveal reveal-d3 quote-box">
+    "The air in Drake didn't just smell bad; it felt heavy, like it was trying to push you into the ground."
+    <cite>- David Baldacci, Zero Day, p. 42</cite>
+  </div>
+</div>
+
+<!-- ========================================
+     SLIDE 03 - BOOK SUMMARY
+     ======================================== -->
+<div class="slide" id="s3">
+  <div class="reveal reveal-d1">
+    <div class="tagline">The Whole Story</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="statement" style="text-align:center; font-size:clamp(1.2rem,2.8vw,2rem); margin-bottom:1.5rem;">
+      A family is murdered in a dying coal-mining town. An Army investigator and a local detective uncover a conspiracy that goes all the way up. And someone is killing to keep it buried.
+    </div>
+  </div>
+  <div class="reveal reveal-d3">
+    <div class="body-text" style="font-size:0.95rem;">
+      John Puller is an Army CID agent. That is the Army's own detective unit. He gets sent to Drake, West Virginia to investigate the brutal murder of an entire family. He teams up with Sam Cole, a local detective who has lived in Drake her whole life.<br><br>
+      They keep digging. They find out the mining company has been poisoning the water and the air for years. People have been getting sick. People have died. And anyone who tried to speak up kept disappearing. The conspiracy goes all the way up: government officials, company executives, cover-ups that go back decades.<br><br>
+      <span class="accent">It is basically a story about greed, silence, and one soldier who refuses to look away.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     SLIDE 04 - THE INVESTIGATION
+     ======================================== -->
+<div class="slide" id="s4">
+  <div class="reveal reveal-d1">
+    <div class="tagline">The Investigation</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="flow-row">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <div class="flow-label">Family<br>Murdered</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <div class="flow-label">Puller<br>Arrives</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <div class="flow-label">Meets<br>Sam Cole</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step">
+        <div class="flow-num">04</div>
+        <div class="flow-label">Uncovers<br>Conspiracy</div>
+      </div>
+    </div>
+  </div>
+  <div class="reveal reveal-d3" style="margin-top:2rem; text-align:center; color:var(--overlay1); font-size:0.9rem;">
+    *CID = Criminal Investigation Division. The Army's own detectives
+  </div>
+</div>
+
+<!-- ========================================
+     SLIDE 05 - WHAT THEY FIND
+     ======================================== -->
+<div class="slide" id="s5">
+  <div class="reveal reveal-d1">
+    <div class="tagline">What They Find</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="statement" style="text-align:center;">
+      It was not just one crime.<br>
+      <span style="color:var(--peach);">It was an entire system built on silence.</span>
+    </div>
+  </div>
+  <div class="reveal reveal-d3">
+    <div class="comparison-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="comp-card">
+        <div class="comp-icon">&#127981;</div>
+        <div class="comp-title">The Company</div>
+        <div class="comp-sub">Coaling Energy dumped toxic waste into the water for years. They knew what they were doing.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-icon">&#128176;</div>
+        <div class="comp-title">The Cover-Up</div>
+        <div class="comp-sub">Government officials took payouts. Reports got buried. Whoever spoke up got silenced. Or killed.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-icon">&#9904;</div>
+        <div class="comp-title">The Cost</div>
+        <div class="comp-sub">People got cancer. Kids got sick. Graves kept filling up. And nobody in charge said a word.</div>
+      </div>
+    </div>
+  </div>
+  <div class="reveal reveal-d4 quote-box" style="margin-top:1.5rem; max-width:700px;">
+    "They killed a family to keep a secret, which means the secret is worth more than four lives."
+    <cite>- David Baldacci, Zero Day, p. 203</cite>
+  </div>
+</div>
+
+<!-- ========================================
+     SLIDE 06 - SETTING: DRAKE, WEST VIRGINIA
+     ======================================== -->
+<div class="slide" id="s6">
+  <div class="reveal reveal-d1">
+    <div class="tagline">Setting - Drake, West Virginia</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="body-text">
+      Drake is not just a backdrop. It is basically its own character in this book.<br><br>
+      Cookie-cutter houses. Rusted trucks. Dead grass everywhere. Coal dust on every surface. Sulfur dioxide in the air. The whole place feels like it is falling apart because it is.<br><br>
+      Baldacci describes a town that is broke and sick. Everyone is breathing in toxic coal dust. The mines are still running but the people are not getting anything from it. The money goes somewhere else.<br><br>
+      <span class="accent">The setting is the most important thing to show in a campaign because it creates a dark mood that explains why the mystery is so dangerous and real.</span>
+    </div>
+  </div>
+  <div class="reveal reveal-d3 quote-box">
+    "The place was tired. Dying. Maybe already dead."
+    <cite>- David Baldacci, Zero Day, p. 32</cite>
+  </div>
+</div>
+
+<!-- ========================================
+     SLIDE 07 - THEME 1: ENVIRONMENTAL DESTRUCTION
+     ======================================== -->
+<div class="slide" id="s7">
+  <div class="reveal reveal-d1">
+    <div class="tagline">Theme 1 - Environmental Destruction</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="body-text">
+      Drake is not just a dying town. It was killed.<br><br>
+      Decades of coal mining destroyed the land. Dead grass. Toxic water. Sulfur dioxide in the air. Coal dust everywhere. Baldacci describes the town like a body that stopped fighting.<br><br>
+      <span class="accent-green">Real world: In Flint, Michigan, the water was poisoned with lead for years. Government officials knew and did nothing. People got sick. Kids got sick. That is the same pattern as Drake. Just a different town.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     SLIDE 08 - THEME 2: CORRUPTION & POWER
+     ======================================== -->
+<div class="slide" id="s8">
+  <div class="reveal reveal-d1">
+    <div class="tagline">Theme 2 - Corruption and Power</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="body-text">
+      The people in charge did not forget. They chose to ignore it. Because stopping it would cost money.<br><br>
+      Anyone who tried to expose the truth got killed. Not threatened. Killed. That is how serious it was.<br><br>
+      <span class="accent-green">Real world: The Volkswagen emissions scandal. The company cheated on pollution tests for years. They knew their cars were pumping out toxic fumes. They lied anyway because fixing it cost too much. Same pattern as Drake. Different industry.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     SLIDE 09 - THEME 3: TRAUMA & TRUST
+     ======================================== -->
+<div class="slide" id="s9">
+  <div class="reveal reveal-d1">
+    <div class="tagline">Theme 3 - Trauma and Trust</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="body-text">
+      Puller is a soldier but Drake is different — the enemy is invisible. A corporation. A system.<br><br>
+      Hardest part: trust. Who can he believe in a town where everyone was silenced?<br><br>
+      Sam Cole has her own trauma. She left Drake and came back. Lost people to the same sickness.<br><br>
+      Real world: Modern warfare is about anonymous enemies — systems, networks, people you never see coming.<br><br>
+      <span class="accent-green">For students: Everyone carries things from their past. But you do not have to be healed to do something that matters.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     SLIDE 10 - KEY CHARACTERS
+     ======================================== -->
+<div class="slide" id="s10">
+  <div class="reveal reveal-d1">
+    <div class="tagline">Key Characters</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="grid-2">
+      <div class="char-card">
+        <div class="char-name">John Puller</div>
+        <div class="char-role">U.S. Army CID Agent</div>
+        <div class="char-traits">
+          <span class="badge badge-mauve">Disciplined</span>
+          <span class="badge badge-blue">Relentless</span>
+          <span class="badge badge-peach">Analytical</span>
+          <span class="badge badge-green">Loyal</span>
+        </div>
+        <div class="char-desc">A soldier and an investigator. He does not stop. Even when the conspiracy goes higher than he thought. He fights for people who cannot fight for themselves. He does not stop. Even when the conspiracy goes higher than he thought. He fights for people who cannot fight for themselves.</div>
+      </div>
+      <div class="char-card">
+        <div class="char-name">Sam Cole</div>
+        <div class="char-role">Local Detective, Drake, WV</div>
+        <div class="char-traits">
+          <span class="badge badge-pink">Brave</span>
+          <span class="badge badge-yellow">Haunted</span>
+          <span class="badge badge-green">Honest</span>
+          <span class="badge badge-mauve">Stubborn</span>
+        </div>
+        <div class="char-desc">She grew up in Drake. She left. She came back. She knows the town and the people. For her, this case is about more than justice. It is about home. She represents the emotional side of the story and shows how the crime affects the local community.</div>
+      </div>
+    </div>
+  </div>
+  <div class="reveal reveal-d3" style="margin-top:1.5rem; text-align:center;">
+    <span style="color:var(--subtext0); font-size:0.95rem;">They are an unlikely pair. Together they are dangerous to the people who want the truth buried.</span>
+  </div>
+</div>
+
+<!-- ========================================
+     SLIDE 11 - MEMORABLE MOMENTS & LESSONS
+     ======================================== -->
+<div class="slide" id="s11">
+  <div class="reveal reveal-d1">
+    <div class="tagline">Memorable Moments &amp; Lessons</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div style="max-width:800px; width:100%; margin-top:1rem;">
+      <div class="moment-item">
+        <div class="moment-num">1</div>
+        <div>
+          <div class="moment-title">The Crime Scene</div>
+          <div class="moment-desc">Puller arrives at the murdered family's house. The details are brutal. It is clear this was not random. It was a message. <span style="color:var(--peach); font-weight:600;">Lesson: Small crimes often hide much bigger problems.</span></div>
+        </div>
+      </div>
+      <div class="moment-item">
+        <div class="moment-num">2</div>
+        <div>
+          <div class="moment-title">Howard Reed's Condition</div>
+          <div class="moment-desc">Seeing how coal mining has physically broken people like Howard Reed shows the victims are not just the ones who were murdered. It is the whole town. <span style="color:var(--peach); font-weight:600;">Lesson: Industrial greed has a permanent human cost.</span></div>
+        </div>
+      </div>
+      <div class="moment-item">
+        <div class="moment-num">3</div>
+        <div>
+          <div class="moment-title">Puller Realizes the Scale</div>
+          <div class="moment-desc">When Puller understands the conspiracy goes all the way up, a local murder becomes a massive threat. <span style="color:var(--peach); font-weight:600;">Lesson: You cannot always judge a situation by how it looks on the surface.</span></div>
+        </div>
+      </div>
+      <div class="moment-item">
+        <div class="moment-num">4</div>
+        <div>
+          <div class="moment-title">Puller and Sam Learning to Trust</div>
+          <div class="moment-desc">Two people from different worlds figuring out how to work together while everything falls apart. <span style="color:var(--peach); font-weight:600;">Lesson: People can overcome their differences for a common goal. Like finding the truth.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     SLIDE 12 - ENGLISH SKILLS
+     ======================================== -->
+<div class="slide" id="s12">
+  <div class="reveal reveal-d1">
+    <div class="tagline">English Skills You Can Learn From This Book</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="comparison-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="comp-card" style="text-align:left;">
+        <div class="comp-title" style="color:var(--blue);">Setting as Character</div>
+        <div class="comp-sub">Drake is not just where the story happens. It is basically its own character. The town is dying and that shapes everything: the mood, the choices people make, the way the mystery unfolds.</div>
+      </div>
+      <div class="comp-card" style="text-align:left;">
+        <div class="comp-title" style="color:var(--peach);">Types of Conflict</div>
+        <div class="comp-sub"><strong>Man vs. Society:</strong> Puller fighting a corrupt system designed to protect powerful people.<br><strong>Man vs. Self:</strong> Puller figuring out who to trust in a town built on secrets.</div>
+      </div>
+      <div class="comp-card" style="text-align:left;">
+        <div class="comp-title" style="color:var(--green);">Voice &amp; Tone</div>
+        <div class="comp-sub">Puller talks in a military way that is different from how a regular person would explain things. Baldacci uses voice to make each character sound different.</div>
+      </div>
+      <div class="comp-card" style="text-align:left;">
+        <div class="comp-title" style="color:var(--mauve);">How Teachers Could Use This</div>
+        <div class="comp-sub">Class discussions about environmental justice. Analyzing atmosphere in writing. Drake's descriptions are vivid. It works with other course texts about outsider perspectives and corrupt systems.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ========================================
+     SLIDE 13 - WHY READ THIS BOOK
+     ======================================== -->
+<div class="slide" id="s13">
+  <div class="reveal reveal-d1">
+    <div class="tagline">Why Read This Book</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="comparison-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="comp-card">
+        <div class="comp-icon">&#128218;</div>
+        <div class="comp-title">Thriller Fans</div>
+        <div class="comp-sub">If you like the Jack Reacher books, this is the same energy. Military investigator, small town, dark secrets. It reads fast.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-icon">&#127916;</div>
+        <div class="comp-title">Mystery Lovers</div>
+        <div class="comp-sub">A crime that looks simple but keeps getting bigger. Every answer leads to another question. The kind of book that keeps you up at night.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-icon">&#127752;</div>
+        <div class="comp-title">People Who Care About Real Issues</div>
+        <div class="comp-sub">Environmental damage, corporate greed, government cover-ups. This book is about stuff that is actually happening right now.</div>
+      </div>
+    </div>
+  </div>
+  <div class="reveal reveal-d3" style="margin-top:1.5rem; text-align:center;">
+    <span style="color:var(--subtext0); font-size:0.95rem;">Anyone who likes stories where one person stands up against a system that is bigger than them.</span>
+  </div>
+</div>
+<!-- ========================================
+     SLIDE 14 - MEDIA CAMPAIGN
+     ======================================== -->
+<div class="slide" id="s14">
+  <div class="reveal reveal-d1">
+    <div class="tagline">Marketing Campaign - Media Concepts</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="comparison-grid" style="grid-template-columns:repeat(2,1fr); max-width:700px;">
+      <div class="comp-card" style="text-align:left;">
+        <div class="comp-title" style="color:var(--peach);">&#128444; Book Cover</div>
+        <img src="images/zero_day_cover_2.jpg" alt="Zero Day book cover" style="width:100%; border-radius:12px; margin:1rem 0; box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+        <div class="comp-sub">Dark mountains and thick fog use dark colors to signal danger. That is a thriller convention. The soldier walking toward a tunnel uses isolation as a visual. The tagline at the bottom sets up the main conflict. Truth versus secrets.</div>
+      </div>
+      <div class="comp-card" style="text-align:left;">
+        <div class="comp-title" style="color:var(--blue);">&#127916; Movie Poster Concept</div>
+        <img src="images/zero_day_cover_1.jpg" alt="Zero Day movie poster concept" style="width:100%; border-radius:12px; margin:1rem 0; box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+        <div class="comp-sub">Fog obscures the town. That is a visual convention for mystery and hidden danger. The lone figure on an empty road signals the outsider entering a hostile space. Dark color palette and minimal composition create tension before a single word is read.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ========================================
+     SLIDE 15 - WORKS CITED
+     ======================================== -->
+<div class="slide" id="s15">
+  <div class="reveal reveal-d1">
+    <div class="tagline">Works Cited</div>
+  </div>
+  <div class="reveal reveal-d2">
+    <div class="works-cited-full">
+      <p class="mla-entry">
+        Baldacci, David. <em>Zero Day</em>. Grand Central Publishing, 2011.
+      </p>
+      <p class="mla-entry">
+        Gemini Nano Banana. Google, 2025, <a href="https://gemini.google.com" target="_blank" rel="noopener">gemini.google.com</a>.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function updateSlideClasses() {
+  const progressPct = ((current) / (total - 1)) * 100;
+  document.getElementById('progress').style.width = progressPct + '%';
+  document.getElementById('slideNum').textContent = current + 1;
+  document.getElementById('counter').textContent = String(current + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+
+  slides.forEach((s, i) => {
+    s.classList.remove('active', 'exit-left');
+    if (i === current) {
+      s.classList.add('active');
+      s.querySelectorAll('.reveal').forEach((el, j) => {
+        el.classList.remove('visible');
+        setTimeout(() => el.classList.add('visible'), 80);
+      });
+    } else if (i < current) {
+      s.classList.add('exit-left');
+    }
+  });
+}
+
+function nextSlide() {
+  if (current < total - 1) { current++; updateSlideClasses(); }
+}
+
+function prevSlide() {
+  if (current > 0) { current--; updateSlideClasses(); }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); prevSlide(); }
+  if (e.key === 'Home') { current = 0; updateSlideClasses(); }
+  if (e.key === 'End') { current = total - 1; updateSlideClasses(); }
+});
+
+let touchStartX = 0;
+let touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX;
+  touchStartY = e.changedTouches[0].screenY;
+});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].screenX - touchStartX;
+  const dy = e.changedTouches[0].screenY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+    if (dx < 0) nextSlide();
+    else prevSlide();
+  }
+});
+
+let wheelAllowed = true;
+document.addEventListener('wheel', e => {
+  if (!wheelAllowed) return;
+  wheelAllowed = false;
+  if (e.deltaY > 30) nextSlide();
+  else if (e.deltaY < -30) prevSlide();
+  setTimeout(() => wheelAllowed = true, 500);
+}, { passive: true });
+
+updateSlideClasses();
+
+// ── Listen for presenter control ──
+window.addEventListener('message', e => {
+  if (e.data && e.data.type === 'goToSlide') {
+    const target = e.data.slide - 1;
+    if (target >= 0 && target < total) {
+      current = target;
+      updateSlideClasses();
+    }
+  }
+});
+</script>
+</body>
+</html>
