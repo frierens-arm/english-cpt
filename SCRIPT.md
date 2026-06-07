@@ -76,37 +76,35 @@ The setting is the most important thing to show because it makes the mystery fee
 ### SLIDE 7 - Theme 1: Environmental Destruction
 *[25 seconds]*
 
-Drake is not just a dying town. It was killed.
+Drake is a town that is died. Coal mining destroyed the land. this is shown in the form of dead grass, Toxic water, Sulfur dioxide in the air and Coal dust everywhere. the author describes a town that is broke and sick. The mines continuously run but the residence of Drake is not getting anything in return
 
-Decades of coal mining destroyed the land. Dead grass. Toxic water. Sulfur dioxide in the air. Coal dust everywhere. Baldacci describes the town like a body that stopped fighting.
+This book is not based of any real life scenarios but most of the things that happen, also happen in real life. Whenever we all use tissues, we pull it out from a tissue box, use it, then throw it out. Companies treat a place like tissues.
 
-This is not made up. This is what happens when companies treat a place like something to use up and throw away.
-
-And this is happening right now. In Flint Michigan, the water was poisoned with lead for years. Government officials knew and did nothing. People got sick. Kids got sick. Same pattern as Drake. Just a different town.
+That is basically what happened in Flint, Michigan. The water was poisoned with lead for years. Government officials knew and did nothing. Citizens including kids, seniors and many other people got sick.
 
 ---
 
 ### SLIDE 8 - Theme 2: Corruption and Power
 *[25 seconds]*
 
-The people in charge did not forget. They chose to ignore it. Because stopping it would cost money.
+The people in charge did not overlook what was happening. They chose to ignore it because stopping it cost money.
 
-Anyone who tried to expose the truth got killed. Not threatened. Killed. That is how serious it was. Company executives, local government, all of them choosing profit over people.
+Anyone who tried to expose the truth got killed. That is how serious it was. Company executives and the local government are picking profit over people.
 
-Look at the Volkswagen emissions scandal. The company cheated on pollution tests for years. They knew their cars were pumping out toxic fumes. They lied anyway because fixing it cost too much. Same pattern as Drake. Different industry.
+Look at the Volkswagen emissions scandal. The company cheated pollution tests for years. They knew their cars were pumping out toxic fumes but they lied anyway because fixing it cost too much. Same pattern as Drake but instead of cars it is coal
 
 ---
 
 ### SLIDE 9 - Theme 3: Trauma and Trust
 *[25 seconds]*
 
-Puller is a soldier. He has seen combat. But Drake is different. The enemy is not on a battlefield. It is a corporation. A system. People in suits.
+Puller is a soldier trined in combat but Drake is a place he is not trained for. The enemy is not on a battlefield but it is people in suits, a system and a corporation.
 
 The hardest part for Puller is trust. Who can he believe in a town where everyone has been silenced?
 
-Sam Cole left Drake and came back. She lost people to the same sickness killing the town. For her this is personal.
+Sam Cole left Drake and came back because she lost people to the same sickness killing the town. For her this is personal reason
 
-This is not just a book thing. Whistleblowers today face the same problem. People who expose corruption lose everything. The system does not reward truth. It punishes it.
+This is not just in the book. People who try expose corrupt corporations or governments lose everything.
 
 ---
 
