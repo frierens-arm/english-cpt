@@ -165,9 +165,9 @@ This book is about stuff that is actually happening. Environmental damage. Corpo
 
 If I was marketing this book to new readers, here is what I would do.
 
-The book cover uses dark mountains and thick fog. Dark colors to signal danger. That is a thriller convention. The soldier walking toward a tunnel uses isolation as a visual. The tagline at the bottom sets up the main conflict. Truth versus secrets.
+The original cover uses a red background. That grabs attention right away. The silhouette walking into the light signals a journey into something unknown. Bold silver title letters stand out. Simple but it works. That is a thriller convention — use bold colors and a central figure to pull the reader in.
 
-The movie poster concept takes it further. Fog covers the town. That is a visual trick for mystery and hidden danger. The lone figure on an empty road shows the outsider entering a hostile space. Dark colors and simple layout create tension before you read a single word.
+The alternate cover shows the actual setting. A soldier walking into a dying town. Dilapidated houses, rusted trucks, fog in the distance. The tunnel at the end gives off a red glow. Everything about this cover says danger and secrets. It tells you what kind of story this is before you read a single word.
 
 The point is: the visuals do the work. They tell you what kind of story this is before you read a single line.
 
