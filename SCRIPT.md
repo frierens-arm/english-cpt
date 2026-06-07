@@ -149,22 +149,16 @@ Teachers could use this book for class discussions about environmental justice, 
 
 ---
 
-### SLIDE 13 - Why Read This Book
-*[25 seconds]*
+### SLIDE 13 - Why High Schoolers Should Read This Book
+*[30 seconds]*
 
-Zero Day is not just a thriller. It is a mirror.
+This book matters because the problems in it are real.
 
-It reads fast. Baldacci knows how to keep you turning pages. But underneath the action, the book is asking real questions.
+Coaling Energy poisoned Drake's water and air for years. That is basically what happened in Flint, Michigan. Government officials knew the water had lead in it. They did nothing. Kids got sick. People died. Same pattern as Drake. Just a different town.
 
-What happens when the people protecting you are the ones hurting you?
+The book also shows how companies abuse their power. Coaling Energy knew they were dumping toxins and covered it up because fixing it cost too much. That happened in real life with Volkswagen. They cheated pollution tests for years while their cars pumped out toxic fumes. Same thing. Different industry.
 
-How far would you go to expose the truth?
-
-What does it cost to stand up when everyone else stays silent?
-
-If you like Jack Reacher or military mysteries with small-town secrets, this one is for you. If you like books that make you actually think about the world, this does that too.
-
-That is basically what Zero Day is. A thriller that does not let you look away from the real stuff.
+This book is about stuff that is actually happening. Environmental damage. Corporate greed. People in charge choosing profit over lives. If you want a thriller that makes you think about the real world, this is it.
 
 ---
 
