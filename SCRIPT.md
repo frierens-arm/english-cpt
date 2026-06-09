@@ -76,7 +76,7 @@ The setting is the most important thing to show because it makes the mystery fee
 ### SLIDE 7 - Theme 1: Environmental Destruction
 *[25 seconds]*
 
-Drake is a town that is died. Coal mining destroyed the land. this is shown in the form of dead grass, Toxic water, Sulfur dioxide in the air and Coal dust everywhere. the author describes a town that is broke and sick. The mines continuously run but the residence of Drake is not getting anything in return
+Drake is a town that is dying. Coal mining destroyed the land. This is shown in the form of dead grass, toxic water, sulfur dioxide in the air and coal dust everywhere. The author describes a town that is broke and sick. The mines continuously run but the residents of Drake are not getting anything in return.
 
 This book is not based of any real life scenarios but most of the things that happen, also happen in real life. Whenever we all use tissues, we pull it out from a tissue box, use it, then throw it out. Companies treat a place like tissues.
 
@@ -91,18 +91,18 @@ The people in charge did not overlook what was happening. They chose to ignore i
 
 Anyone who tried to expose the truth got killed. That is how serious it was. Company executives and the local government are picking profit over people.
 
-Look at the Volkswagen emissions scandal. The company cheated pollution tests for years. They knew their cars were pumping out toxic fumes but they lied anyway because fixing it cost too much. Same pattern as Drake but instead of cars it is coal
+Look at the Volkswagen emissions scandal. The company cheated pollution tests for years. They knew their cars were pumping out toxic fumes but they lied anyway because fixing it cost too much. Same pattern as Drake, but instead of cars it is coal.
 
 ---
 
 ### SLIDE 9 - Theme 3: Trauma and Trust
 *[25 seconds]*
 
-Puller is a soldier trined in combat but Drake is a place he is not trained for. The enemy is not on a battlefield but it is people in suits, a system and a corporation.
+Puller is a soldier trained in combat but Drake is a place he is not trained for. The enemy is not on a battlefield — it is people in suits, a system, a corporation.
 
 The hardest part for Puller is trust. Who can he believe in a town where everyone has been silenced?
 
-Sam Cole left Drake and came back because she lost people to the same sickness killing the town. For her this is personal reason
+Sam Cole left Drake and came back because she lost people to the same sickness killing the town. For her this is a personal reason.
 
 This is not just in the book. People who try expose corrupt corporations or governments lose everything.
 
@@ -160,27 +160,25 @@ This book is about stuff that is actually happening. Environmental damage. Corpo
 
 ---
 
-### SLIDE 14 - Marketing Campaign
-*[25 seconds]*
+### SLIDE 14 - Book Cover Set
 
-If I was marketing this book to new readers, here is what I would do.
+Here are two different covers for Zero Day.
 
-The original cover uses a red background. That grabs attention right away. The silhouette walking into the light signals a journey into something unknown. Bold silver title letters stand out. Simple but it works. That is a thriller convention — use bold colors and a central figure to pull the reader in.
+The dark version uses a moody, shadowy aesthetic. It sets the tone right away — this is not a feel-good story. The colors are muted, the atmosphere is heavy. It tells you something is wrong before you even open the book.
 
-The alternate cover shows the actual setting. A soldier walking into a dying town. Dilapidated houses, rusted trucks, fog in the distance. The tunnel at the end gives off a red glow. Everything about this cover says danger and secrets. It tells you what kind of story this is before you read a single word.
-
-The point is: the visuals do the work. They tell you what kind of story this is before you read a single line.
+The daylight version is brighter but still unsettling. You can see the town more clearly. The details stand out — the decay, the isolation. It is the same story but a different feeling. Both covers work because they both tell you what kind of book this is.
 
 ---
 
-### SLIDE 15 - Closing
-*[10 seconds]*
+### SLIDE 15 - Movie Poster Concept
 
-Some secrets are worth killing for.
+This is what Zero Day could look like as a movie. The poster shows the town, the mood, the stakes. If this book got adapted, this is the vibe it would have. Dark, tense, and it makes you want to know what happens.
 
-That is what this book is about. Thank you.
+---
 
-Any questions?
+### SLIDE 16 - Works Cited
+
+All the sources for the real-world connections I mentioned. The book itself, the Flint water crisis from the EPA, the Volkswagen emissions scandal, and the Congressional Research Service report on mountaintop mining. Everything is cited in MLA format.
 
 ---
 
